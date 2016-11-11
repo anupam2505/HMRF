@@ -41,3 +41,14 @@ imwrite(uint8(X*120),'initial labels.png');
 [X, mu, sigma]=HMRF_EM(X,Y,Z,mu,sigma,k,EM_iter,MAP_iter);
 imwrite(uint8(X*120),'final labels.png');
 toc;
+
+%%
+mu = [1;0;0.5];
+sigma = [1];
+p = [0.33,0.33,0.33];
+obj = gmdistribution(mu,sigma,p);
+
+Y = random(obj,512*512);
+Y = vec2mat(Y,512);
+K = mat2gray(Y);
+imshow(K);
