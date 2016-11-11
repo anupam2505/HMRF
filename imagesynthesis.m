@@ -9,24 +9,30 @@ imshow(J)
 J = EMSeg(J, 3)
 imshow(J)
 %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear;clc;close all;
 
+%mex BoundMirrorExpand.cpp;
+%mex BoundMirrorShrink.cpp;
 
-%  K = J(:);
-%  mu=mean(K);
-%  sigma=std(K);
-%  P=normpdf(K, mu, sigma);
-%  Z = norminv(P,mu,sigma);
-%  X = mvnrnd(mu,sigma,200);
-%  scatter(X(:,1),X(:,1),10,'ko');
-%  options = statset('Display','final');
-%  gm = fitgmdist(X,1,'Options',options);
-%  idx = cluster(gm,X);
-%  cluster1 = (idx == 1);
-%  cluster2 = (idx == 2);
-% figure;
-%  scatter(X(cluster1,1),X(cluster1,1),10,'r+');
-%  hold on
-%   scatter(X(cluster2,1),X(cluster2,1),10,'bo'); 
-%  hold off
-%  legend('Cluster 1','Cluster 2','Location','NW')
+I=imread('C:\Users\apanwar4\Documents\MATLAB\HMRF\seg.jpg');
+Y=rgb2gray(I);
+Z = edge(Y,'canny',0.75);
+
+imwrite(uint8(Z*255),'edge.png');
+
+Y=double(Y);
+Y=gaussianBlur(Y,3);
+imwrite(uint8(Y),'blurred image.png');
+
+k=3;
+EM_iter=10; % max num of iterations
+MAP_iter=10; % max num of iterations
+
+tic;
+fprintf('Performing k-means segmentation\n');
+[X, mu, sigma]= image_kmeans(Y,k);
+imwrite(uint8(X*120),'initial labels.png');
+
+[X, mu, sigma]=HMRF_EM(X,Y,Z,mu,sigma,k,EM_iter,MAP_iter);
+imwrite(uint8(X*120),'final labels.png');
+toc;
