@@ -1,6 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-% Simulating the image using GMM and HMRF
 img = randn(512);
 imshow(img,[]);
 
