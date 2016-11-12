@@ -49,6 +49,23 @@ p = [0.33,0.33,0.33];
 obj = gmdistribution(mu,sigma,p);
 
 Y = random(obj,512*512);
-Y = vec2mat(Y,512);
-K = mat2gray(Y);
-imshow(K);
+Y = reshape(Y,512, 512);
+
+imshow(Y);
+Y = double(I)
+
+% HMRF part
+k=3; % k: number of regions
+g=3; % g: number of GMM components
+beta=1; % beta: unitary vs. pairwise
+EM_iter=3; % max num of iterations
+MAP_iter=10; % max num of iterations
+
+tic;
+fprintf('Performing k-means segmentation\n');
+[X, GMM]=image_kmeans(Y,k,g);
+imwrite(uint8(X*80),'initial labels.png');
+
+[X, GMM]=HMRF_EM(X,Y,GMM,k,g,EM_iter,MAP_iter,beta);
+imwrite(uint8(X*80),'final labels.png');
+toc;
